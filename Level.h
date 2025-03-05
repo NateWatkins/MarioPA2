@@ -20,16 +20,20 @@ class Level{
         bool Move(int NWSE);
         string getMarioPosition();
         Mario& getMario();
+        int initLives;
 
 
         int dimensions;
 
 
-        void printUpdate(int NWSE);
+        void printUpdate(int currentLevelIndex, int NWSE);
         void printGrid();
         char** grid;
         void placeMario(int numInitialLives);
         bool isGameOver();
+
+        int oldCordX;
+        int oldCordY;
         
         
     private:

@@ -11,7 +11,7 @@ Mario::Mario(){
 
 
 
-Mario::Mario(int inputLives, int inputRow, int inputColumn){
+Mario::Mario(int inputRow, int inputColumn, int inputLives){
     this->numLives = inputLives;
     this->row = inputRow;
     this->column = inputColumn;

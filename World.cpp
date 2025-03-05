@@ -51,9 +51,10 @@ Level* World::getCurrentLevel() {
 
 // Add a function to advance to the next level
 void World::nextLevel() {
-    if (currentLevelIndex < numWorlds - 1) {
-        currentLevelIndex++;  
+    if (this->currentLevelIndex < this->numWorlds - 1) {
+        this->currentLevelIndex++;  
     }
+
 }
 
 
@@ -92,7 +93,7 @@ void World::printFirstStatus(){
     cout<<"Mario is starting at position"<<levels[0]->getMarioPosition()<<endl;
     cout<<"=========="<<endl;     
     levels[0]->printGrid();  
-    
+    cout<<"=========="<<endl;  
 };
 
 
@@ -100,35 +101,68 @@ void World::printFirstStatus(){
 void World::RunGame(){
     FileProcessor* FP = new FileProcessor("input.txt", "output.txt");
     int* FileContents = FP->ReadFile();
-    setAttributes(FileContents);
-    
-    World* W = new World(getNumLevels(), getDimensions(), getCoinPct(), getNothingPct(), getGoobaPct(), getKoopaPct(), getMushPct(), getInitialLives());
-    //Goes through Each Level
-    
-    //Make mario
-    
-    //Comment THIS IS CHATGPT
-    
+
     ostringstream outputBuffer;
-    streambuf* oldCout = cout.rdbuf(outputBuffer.rdbuf());
+
+cout << "After redirection" << endl;
+
+    setAttributes(FileContents);
+    cout<<getInitialLives()<<endl;
+
+    cout << "numLevels: " << getNumLevels() << endl;
+    cout << "dimensions: " << getDimensions() << endl;
+    cout << "initialLives: " << getInitialLives() << endl;
+    cout << "coinPct: " << getCoinPct() << endl;
+    cout << "nothingPct: " << getNothingPct() << endl;
+    cout << "goobaPct: " << getGoobaPct() << endl;
+    cout << "koopaPct: " << getKoopaPct() << endl;
+    cout << "mushPct: " << getMushPct()<<endl;
+    
+
+    World* W = new World(getNumLevels(), getDimensions(), getCoinPct(), getNothingPct(), getGoobaPct(), getKoopaPct(), getMushPct(), getInitialLives());
+
+
+   
+    //Comment THIS IS CHATGPT
     W->printFirstStatus(); // Redirects printed output to buffer
-    cout.rdbuf(oldCout); // Restore std::cout
-    FP->WriteToFile(outputBuffer.str());
     for(int i = 0; i < getNumLevels(); i++){
+        if(i>0){levels[currentLevelIndex]->placeMario(getInitialLives());}
+        
         int NWSE = rand() % 4;
+        
+        Level* currentLevel = W->getCurrentLevel();
 
-        while(!W->levels[0]->Move(NWSE)){
-            levels[0]->isGameOver();
 
+        while(!currentLevel->isGameOver()){
+            //if(W->levels[0]->Move(NWSE)){break;
+            currentLevel->printUpdate(W->currentLevelIndex, NWSE);
+            //cout << "Mario is moving in direction: " << NWSE << endl;
+            // Move Mario and check if he reaches the boss or warp
+            if (currentLevel->Move(NWSE)) {
+                break;  // Move to the next level
+            }
+            NWSE = rand() % 4;
+        }  
+
+        // If game over, stop game
+        if(!currentLevel->isGameOver()) {
+            cout << "Game Over! Mario has run out of lives." << endl;
+            break;
         }
+
+        // Advance to the next level if Mario wins or finds a warp
+        W->nextLevel();
     }
 
+    streambuf* oldCout = cout.rdbuf(outputBuffer.rdbuf());  // THIS CAUSES THE CRASH
+    cout.rdbuf(oldCout); // Restore std::cout
+    FP->WriteToFile(outputBuffer.str());
     //M.UpdateGame(W.getCurrentLevel(),10);
     delete W;
     delete FP;
 
     //FP = nullptr;
-
+    
 };
 
 

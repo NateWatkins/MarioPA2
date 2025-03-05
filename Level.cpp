@@ -12,7 +12,9 @@ using namespace std;
 //Used ChatGpt to add the default Mario case to the constructor so that it is initialized before placing Mario in the World. Giving Mario (x,y) is temporary so it shouldn't effect anything
 
 
-Level::Level(int dimensions, int coinPct, int emptyPct, int goombaPct,int koopaPct, int mushPct, bool isLastLevel, int numInitialLives) : M(0,0,0){ 
+Level::Level(int dimensions, int coinPct, int emptyPct, int goombaPct,int koopaPct, int mushPct, bool isLastLevel, int numInitialLives){ 
+    this->initLives = numInitialLives;
+
     this->dimensions = dimensions;
     grid = new char*[dimensions];
     for (int i = 0; i < dimensions; i++) {
@@ -67,13 +69,16 @@ Mario& Level::getMario() {
 
 string directions[] = {"North", "West", "South", "East"};
 
-void Level::printUpdate(int NWSE){
-    cout << "Level: 0. Mario is at position: (" << dimensions - M.getRow() - 1 << "," << M.getColumn() << "). "
+void Level::printUpdate(int currentLevelIndex, int NWSE){
+    cout << "Level: "<< currentLevelIndex <<". Mario is at position: (" << dimensions - M.getRow() - 1 << "," << M.getColumn() << "). "
         << "Mario is at power level " << M.getPwrLvl() << ". "
         << "Mario visited " << M.getEncounter() << ". "
         << "Mario has " << M.getNumLives() << " lives left. "
         << "Mario has " << M.getNumCoins() << " coins. "
         << "Mario will move " << directions[NWSE] << "." << endl;
+    cout<<"=========="<<endl;
+    printGrid();
+    cout<<"=========="<<endl;
 }
 
 //Use the built in to_string function
@@ -87,8 +92,8 @@ bool Level::Move(int NWSE){
     if(isGameOver()){
         return true;
     }
-    int oldCordX = M.getColumn();
-    int oldCordY = M.getRow(); 
+    oldCordX = M.getColumn();
+    oldCordY = M.getRow(); 
 
     int newCordX = M.getColumn(); 
     int newCordY = M.getRow();
@@ -199,7 +204,7 @@ bool Level::Move(int NWSE){
 
 
 bool Level::isGameOver(){
-    return M.getNumLives() <=0;
+    return (M.getNumLives()<=0);
 };
 
 
@@ -210,6 +215,9 @@ Level::~Level(){
     delete[] grid;
 
 };
+
+
+
 
 
 void Level::printGrid() {
@@ -247,7 +255,8 @@ void Level::placeMario(int numInitialLives) {
                     grid[first][sec] = 'H';
                     M.setRow(first);
                     M.setColumn(sec);
-                    M.setNumLives(numInitialLives);
+                    M.setNumLives(initLives);
+                    //cout << "Mario's lives after placement: " << M.getNumLives() << endl;
                     return; 
                 }
                 numX++;

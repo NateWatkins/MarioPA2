@@ -23,7 +23,6 @@ class Mario{
         //bool Move(Level* s,int NWSE);
         void collectCoin();
         void eatMushroom();
-        bool fightEnemy(char enemyType);
         //void UpdateGame(Level* s);
 
 
