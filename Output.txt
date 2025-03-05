@@ -1,0 +1,20 @@
+b g m g k 
+c x k k c 
+w g k m g 
+k m c c c 
+g g c c x 
+==========
+b m x m m 
+m c g k k 
+c k g k m 
+m k g k x 
+x x g k g 
+==========
+Mario is starting at position(4, 4)
+==========
+b g m g k 
+c x k k c 
+w g k m g 
+k m c c c 
+g g c c H 
+
