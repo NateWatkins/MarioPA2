@@ -1,0 +1,4 @@
+b = (b+1)% maxSize
+
+Use this for wrapping around the array for mario
+
