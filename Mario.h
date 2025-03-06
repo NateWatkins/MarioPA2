@@ -14,12 +14,12 @@ using namespace std;
 
 class Mario{
     public:
-        Mario(int inputLives, int inputRow, int inputColumn);
-        ~Mario();
-        Mario();
+        Mario(int inputLives, int inputRow, int inputColumn); //overloading constructor
+        ~Mario(); //deconstructor
+        Mario(); // constructor
 
         
-
+        
         //bool Move(Level* s,int NWSE);
         void collectCoin();
         void eatMushroom();
@@ -45,7 +45,7 @@ class Mario{
 
 
 
-
+        // Getters
         char getOldChar();
         int getNumCoins();
         int getNumLives();
