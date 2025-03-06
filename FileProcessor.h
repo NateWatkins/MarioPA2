@@ -11,7 +11,7 @@
 using namespace std;
 
 
-// start
+// Declare methods and functions so we can implement them in the cpp files
 class FileProcessor{
     public:
         void WriteToFile(string line);
