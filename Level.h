@@ -25,6 +25,9 @@ class Level{
 
         int dimensions;
 
+        void printLostToBoss(int currentLevelIndex);
+
+        bool fightBossAgain();     
 
         void printUpdate(int currentLevelIndex, int NWSE);
         void printGrid();
@@ -34,7 +37,8 @@ class Level{
 
         int oldCordX;
         int oldCordY;
-        
+        bool lostBossBattle;
+
         
     private:
         Mario M;

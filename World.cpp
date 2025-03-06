@@ -103,15 +103,13 @@ void World::RunGame(){
 
     ostringstream outputBuffer;
 
-cout << "After redirection" << endl;
 
     setAttributes(FileContents);
 
     World* W = new World(getNumLevels(), getDimensions(), getCoinPct(), getNothingPct(), getGoobaPct(), getKoopaPct(), getMushPct(), getInitialLives());
-    printWorld();
+    W->printWorld();
 
    
-    //Comment THIS IS CHATGPT
     //W->printFirstStatus(); // Redirects printed output to buffer
     for(int i = 0; i < getNumLevels(); i++){
         Level* currentLevel = W->getCurrentLevel();
@@ -121,17 +119,24 @@ cout << "After redirection" << endl;
         
 
         W->printFirstStatus(); 
+        currentLevel->printUpdate(W->currentLevelIndex, NWSE);
         while(!currentLevel->isGameOver()){
             //if(W->levels[0]->Move(NWSE)){break;
             //cout << "Mario is moving in direction: " << NWSE << endl;
-            currentLevel->printUpdate(W->currentLevelIndex, NWSE);
-
             // Move Mario and check if he reaches the boss or warp
             if (currentLevel->Move(NWSE)) {
+                
+                while(currentLevel->lostBossBattle){
+                    currentLevel->fightBossAgain();
+                    currentLevel->printUpdate(W->currentLevelIndex, NWSE);
+                    if(currentLevel->isGameOver()){cout<<"You lost to da boss"<<endl;}
+                }
                 currentLevel->printUpdate(W->currentLevelIndex, NWSE);
-                break;  // Move to the next level
+                break; 
             }
+            
             NWSE = rand() % 4;
+            currentLevel->printUpdate(W->currentLevelIndex, NWSE);
         }                                                           
 
 

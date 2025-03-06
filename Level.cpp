@@ -79,6 +79,18 @@ void Level::printUpdate(int currentLevelIndex, int NWSE){
     cout<<"=========="<<endl;
 }
 
+
+void Level::printLostToBoss(int currentLevelIndex){
+    cout<<"Mario Lost to the Boss on Level: "<< currentLevelIndex <<". Mario is at position: (" << M.getColumn() << "," << M.getRow() << "). "
+        << "Mario is at power level " << M.getPwrLvl() << ". "
+        << "Mario has " << M.getNumLives() << " lives left. "
+        << "Mario has " << M.getNumCoins() << " coins. "<<endl;
+    cout<<"=========="<<endl;
+}
+
+
+
+
 //Use the built in to_string function
 string Level::getMarioPosition(){
     return ("(" + to_string(M.getColumn()) + ", " + to_string(M.getRow()) + ")");
@@ -169,13 +181,16 @@ bool Level::Move(int NWSE){
         while(!isGameOver()){
             if(M.fightBoss()){//Move on to next Level
                 M.setEncounter("the Boss and won!");
+                printGrid();
                 return true;
             }else{ // If mario loses
-                M.lostBattle();
+                M.lostBossBattle();
                 M.setEnemiesKilled(0);
                 M.setEncounter("a Boss and lost");
+                lostBossBattle = false;
             }
         }
+        printGrid();
         return true;
     }else if(occupiedSpace == 'm'){
         M.eatMushroom();
@@ -184,6 +199,7 @@ bool Level::Move(int NWSE){
     }else if(occupiedSpace =='w'){
         M.setEncounter("a warp portal and was teleported to the Next Level");
         M.setOldChar('x');
+        printGrid();
         return true;
     }else{
         M.setOldChar('x');
@@ -191,12 +207,12 @@ bool Level::Move(int NWSE){
     }
 
 
-
+    grid[M.getRow()][M.getColumn()] = 'H';
+    grid[oldCordY][oldCordX] = M.getOldChar();
+    
     printGrid();
     cout<<"=========="<<endl;
     cout<<"=========="<<endl;
-    grid[M.getRow()][M.getColumn()] = 'H';
-    grid[oldCordY][oldCordX] = M.getOldChar();
 
     
     
@@ -208,6 +224,20 @@ bool Level::Move(int NWSE){
 bool Level::isGameOver(){
     return (M.getNumLives()<=0);
 };
+
+bool Level::fightBossAgain(){
+        while(!isGameOver()){
+        if(M.fightBoss()){//Move on to next Level
+            M.setEncounter("the Boss and won!");
+            this->lostBossBattle = true;
+        }else{ // If mario loses
+            M.lostBossBattle();
+            M.setEnemiesKilled(0);
+            M.setEncounter("a Boss and lost");
+        }
+    }
+}
+
 
 
 Level::~Level(){

@@ -18,6 +18,8 @@ class Mario{
         ~Mario();
         Mario();
 
+
+        void lostBossBattle();
         
 
         //bool Move(Level* s,int NWSE);

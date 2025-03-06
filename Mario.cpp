@@ -112,8 +112,15 @@ void Mario::checkWinStreak(int enemiesKilled){
 //string directions[] = {"North", "West", "South", "East"};
 
 
-
-
+void Mario::lostBossBattle(){
+        if(pwrLvl<= 1){ // Lose a life and power level stays 0
+        numLives--;
+        pwrLvl = 0;
+        // or do we put oldChar = 'x' in the lostBattle
+        }else{
+            pwrLvl = 0;
+        }
+};
 
 
 void Mario::killedEnemy(){
