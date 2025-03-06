@@ -19,12 +19,13 @@ Level::Level(int dimensions, int coinPct, int emptyPct, int goombaPct,int koopaP
         grid[i] = new char[dimensions];
     }
     srand(time(0));
-    int bossX = rand() % dimensions;
+    // put boss and warp into random place on grid
+    int bossX = rand() % dimensions; 
     int bossY = rand() % dimensions;
     int warpX = rand() % dimensions;
     int warpY = rand() % dimensions;
 
-    //Edge Case Protection
+    //Edge Case Protection. Makes sure boss and warp cannot be put in the same place on the grid.
     while (bossX == warpX && bossY == warpY) {
         warpX = rand() % dimensions;
         warpY = rand() % dimensions;
@@ -48,10 +49,10 @@ Level::Level(int dimensions, int coinPct, int emptyPct, int goombaPct,int koopaP
 
         }
     }
-    if(!isLastLevel){
+    if(!isLastLevel){ // makes sure there is no warp in last level
         grid[warpY][warpX] = 'w';
         
-    }
+    } // puts in a boss
     grid[bossY][bossX] = 'b';
 };
 
@@ -82,7 +83,7 @@ bool Level::Move(Mario& M, int NWSE){
     if(M.isGameOver()){
         return true;
     }
-    int oldCordX = M.getColumn();
+    int oldCordX = M.getColumn(); 
     int oldCordY = M.getRow(); 
 
     int newCordX = M.getColumn(); 
@@ -95,24 +96,24 @@ bool Level::Move(Mario& M, int NWSE){
     //These chunks are pulling the cordinates of marios next position
     if(NWSE == 0){ //North
         if(M.needsWrap(grid, 0, dimensions)){
-            newCordY = dimensions-1;
+            newCordY = dimensions-1; // moves from top of grid to the bottom of the grid (in the case mario goes outside the dimensions established)
         }else{
             newCordY = M.getRow() - 1;
         }
     }else if(NWSE == 2){ //South
-        if(M.needsWrap(grid, 2, dimensions)){
+        if(M.needsWrap(grid, 2, dimensions)){ // moves from bottom of grid to the top of the grid (in the case mario goes outside the dimensions established)
             newCordY = 0;
         }else{
             newCordY = M.getRow()+1 ;
         }
     }if(NWSE == 1){ //West
-        if(M.needsWrap(grid, 1,dimensions )){
+        if(M.needsWrap(grid, 1,dimensions )){ // far left side of the grid to the far right side (in the case mario goes outside the dimensions established)
             newCordX = dimensions -1 ;
         }else{
             newCordX = M.getColumn() -1;
         }
     }else if(NWSE == 3){ // East
-        if(M.needsWrap(grid, 3, dimensions)){
+        if(M.needsWrap(grid, 3, dimensions)){ // far right side to the far left side (in the case mario goes outside the dimensions established)
             newCordX = 0;
         }else{
             newCordX = M.getColumn() + 1;
@@ -129,20 +130,20 @@ bool Level::Move(Mario& M, int NWSE){
     //Everyloss I need to reset Enemies Killed to reset the win streak
 
     char occupiedSpace = grid[M.getRow()][M.getColumn()];
-    if(occupiedSpace == 'c'){
+    if(occupiedSpace == 'c'){ // mario adds coin to inventory and leaves an 'x' behind him to mark that its empty
         M.collectCoin();
         M.setOldChar('x');
         M.setEncounter("a coin");
-    }else if(occupiedSpace == 'g'){
+    }else if(occupiedSpace == 'g'){ 
         if(M.fightGooba()){ // If mario wins -> Add to enemies killed, 
-            M.killedEnemy();
-            M.checkWinStreak(M.getEnemiesKilled());
-            M.setOldChar('x');
+            M.killedEnemy(); // kills the enemy
+            M.checkWinStreak(M.getEnemiesKilled()); //adds and checks win streak
+            M.setOldChar('x'); // leaves an 'x' behind him to mark that its empty
             M.setEncounter("a Goomba and won");
         }else{ // If mario loses
-            M.lostBattle();
-            M.setOldChar('x');
-            M.setEnemiesKilled(0);
+            M.lostBattle(); //if he loses the battle
+            M.setOldChar('x'); // moves on and leaves an 'x'
+            M.setEnemiesKilled(0); // since he lost a life enemy kill count is reset
             M.setEncounter("a Goomba and lost");
         }
     }else if(occupiedSpace == 'k'){
@@ -168,12 +169,12 @@ bool Level::Move(Mario& M, int NWSE){
             return false;
         }
     }else if(occupiedSpace == 'm'){
-        M.eatMushroom();
-        M.setOldChar('x');
+        M.eatMushroom(); // eats a mushroom
+        M.setOldChar('x'); // leaves an 'x' for empty space
         M.setEncounter("a mushroom");
     }else if(occupiedSpace =='w'){
         M.setEncounter("a warp portal and was teleported to the Next Level");
-        M.setOldChar('x');
+        M.setOldChar('x'); 
         return true;
     }else{
         M.setOldChar('x');
@@ -206,14 +207,14 @@ Level::~Level(){
 
 void Level::printGrid() {
     for (int i = 0; i < dimensions; i++) {
-        for (int j = 0; j < dimensions; j++) {
+        for (int j = 0; j < dimensions; j++) { // loops through grid elements and prints out a 2d grid
             cout << grid[i][j] << " ";
         }
         cout << endl;
     }
 };
 
-void Level::placeMario(int numInitialLives) {
+void Level::placeMario(int numInitialLives) { // lives is up to input file
 
     int numX = 0;
 
