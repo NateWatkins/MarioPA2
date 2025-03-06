@@ -26,7 +26,9 @@ World::World(int numWorlds,int dimensions, int coinPct, int emptyPct, int goomba
             levels[i] = new Level(dimensions,coinPct, emptyPct,goombaPct, koopaPct,  mushPct, true, numInitialLives);
         }else{
             levels[i] = new Level(dimensions,coinPct, emptyPct,goombaPct, koopaPct,  mushPct, false, numInitialLives);
+
         }
+        levels[i]->currentLevelIndex=i;
     }
 
 };
@@ -129,7 +131,6 @@ void World::RunGame(){
                 
 
                 while(currentLevel->lostBossBattle){
-
                     addMove();
                     currentLevel->fightBossAgain();
                     //currentLevel->printUpdate(W->currentLevelIndex, NWSE);
@@ -137,7 +138,7 @@ void World::RunGame(){
 
 
                 if(currentLevel->isGameOver()){cout<<"You lost to da boss"<<endl;}
-                if(currentLevel->beatBoss){return;}
+                //if(currentLevel->beatBoss){return;}
                 currentLevel->printUpdate(W->currentLevelIndex, NWSE);
                 break; 
             
@@ -146,6 +147,8 @@ void World::RunGame(){
             NWSE = rand() % 4;
             currentLevel->printUpdate(W->currentLevelIndex, NWSE);
         }                                                           
+
+
 
 
 
