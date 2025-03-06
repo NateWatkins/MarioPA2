@@ -13,13 +13,13 @@ using namespace std;
 class Enemy{
     public:
 
-        Enemy();
-        ~Enemy();
+        Enemy(); // constructor 
+        ~Enemy(); // deconstructor 
         
 
-        bool fightGooba();
-        bool fightKoopa();
-        bool fightBoss();
+        bool fightGooba(); // fight Gooba
+        bool fightKoopa(); // fight Koopa
+        bool fightBoss(); // fight Boss
         //void applyFight(bool won, Mario mario, char enemyType);
 
 };
