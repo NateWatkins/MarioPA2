@@ -1,3 +1,17 @@
+/*
+Marshall Longtin and Nate Watkins
+2438966 and 2443602
+longtin@chapman.edu and nwatkins@chapman.edu
+CPSC 350-02 and 350-01
+PA2
+
+*/
+
+
+
+
+
+
 #include "Mario.h"
 #include "World.h"
 #include "FileProcessor.h"
