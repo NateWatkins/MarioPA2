@@ -18,7 +18,7 @@ World::World(int numWorlds,int dimensions, int coinPct, int emptyPct, int goomba
     this->numWorlds = numWorlds;
     levels = new Level*[numWorlds];
 
-    for(int i = 0; i< numWorlds; i++){
+    for(int i = 0; i< numWorlds; i++){ 
         if(i==(numWorlds-1)){
             levels[i] = new Level(dimensions,coinPct, emptyPct,goombaPct, koopaPct,  mushPct, true, numInitialLives);
         }else{
@@ -57,7 +57,7 @@ void World::nextLevel() {
     }
 }
 
-World::~World(){
+World::~World(){ 
     for (int i = 0; i < numWorlds; i++) {
         delete levels[i];  
     }
@@ -67,7 +67,7 @@ World::~World(){
 
 
 
-void World::setAttributes(int* values) {
+void World::setAttributes(int* values) { // setting values
     numLevels = values[0];
     dimensions = values[1];
     initialLives = values[2];
@@ -90,7 +90,7 @@ void World::printFirstStatus(){
 
 
 void World::RunGame(){
-    FileProcessor FP = FileProcessor("input.txt", "output.txt");
+    FileProcessor FP = FileProcessor("Input.txt", "Output.txt");
     int* FileContents = FP.ReadFile();
     setAttributes(FileContents);
     
