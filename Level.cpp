@@ -16,9 +16,9 @@ Level::Level(int dimensions, int coinPct, int emptyPct, int goombaPct,int koopaP
     this->initLives = numInitialLives;
 
     this->dimensions = dimensions;
-    grid = new char*[dimensions];
+    this->grid = new char*[dimensions];
     for (int i = 0; i < dimensions; i++) {
-        grid[i] = new char[dimensions];
+        this->grid[i] = new char[dimensions];
     }
     int bossX = rand() % dimensions;
     int bossY = rand() % dimensions;
@@ -70,20 +70,18 @@ Mario& Level::getMario() {
 string directions[] = {"North", "West", "South", "East"};
 
 void Level::printUpdate(int currentLevelIndex, int NWSE){
-    cout << "Level: "<< currentLevelIndex <<". Mario is at position: (" << dimensions - M.getRow() - 1 << "," << M.getColumn() << "). "
+    cout << "Level: "<< currentLevelIndex <<". Mario is at position: (" << M.getColumn() << "," << M.getRow() << "). "
         << "Mario is at power level " << M.getPwrLvl() << ". "
         << "Mario visited " << M.getEncounter() << ". "
         << "Mario has " << M.getNumLives() << " lives left. "
         << "Mario has " << M.getNumCoins() << " coins. "
         << "Mario will move " << directions[NWSE] << "." << endl;
     cout<<"=========="<<endl;
-    printGrid();
-    cout<<"=========="<<endl;
 }
 
 //Use the built in to_string function
 string Level::getMarioPosition(){
-    return ("(" + to_string(M.getRow()) + ", " + to_string(M.getColumn()) + ")");
+    return ("(" + to_string(M.getColumn()) + ", " + to_string(M.getRow()) + ")");
 };
 
 
@@ -151,7 +149,7 @@ bool Level::Move(int NWSE){
             M.setEncounter("a Goomba and won");
         }else{ // If mario loses
             M.lostBattle();
-            M.setOldChar('x');
+            M.setOldChar('g');
             M.setEnemiesKilled(0);
             M.setEncounter("a Goomba and lost");
         }
@@ -163,20 +161,22 @@ bool Level::Move(int NWSE){
             M.setEncounter("a Koopa and won");
         }else{ // If mario loses
             M.lostBattle();
-            M.setOldChar('x');
+            M.setOldChar('k');
             M.setEnemiesKilled(0);
             M.setEncounter("a Koopa and lost");
         }
     }else if(occupiedSpace == 'b'){
-        if(M.fightBoss()){//Move on to next Level
-            M.setEncounter("the Boss and won!");
-            return true;
-        }else{ // If mario loses
-            M.lostBattle();
-            M.setEnemiesKilled(0);
-            M.setEncounter("a Boss and lost");
-            return false;
+        while(!isGameOver()){
+            if(M.fightBoss()){//Move on to next Level
+                M.setEncounter("the Boss and won!");
+                return true;
+            }else{ // If mario loses
+                M.lostBattle();
+                M.setEnemiesKilled(0);
+                M.setEncounter("a Boss and lost");
+            }
         }
+        return true;
     }else if(occupiedSpace == 'm'){
         M.eatMushroom();
         M.setOldChar('x');
@@ -192,7 +192,9 @@ bool Level::Move(int NWSE){
 
 
 
-
+    printGrid();
+    cout<<"=========="<<endl;
+    cout<<"=========="<<endl;
     grid[M.getRow()][M.getColumn()] = 'H';
     grid[oldCordY][oldCordX] = M.getOldChar();
 
@@ -229,8 +231,9 @@ void Level::printGrid() {
     }
 };
 
-void Level::placeMario(int numInitialLives) {
 
+
+void Level::placeMario(int numInitialLives) {
     int numX = 0;
 
     for (int i = 0; i < dimensions; i++) {
@@ -242,6 +245,7 @@ void Level::placeMario(int numInitialLives) {
     }
 
     if (numX == 0){
+        cout<<"Error there was no spot to place Mario :(. ";
         return; 
     }  
 

@@ -87,7 +87,6 @@ void World::setAttributes(int* values) {
 
 
 void World::printFirstStatus(){
-    printWorld();
 
     levels[0]->placeMario(getInitialLives());
     cout<<"Mario is starting at position"<<levels[0]->getMarioPosition()<<endl;
@@ -107,45 +106,38 @@ void World::RunGame(){
 cout << "After redirection" << endl;
 
     setAttributes(FileContents);
-    cout<<getInitialLives()<<endl;
-
-    cout << "numLevels: " << getNumLevels() << endl;
-    cout << "dimensions: " << getDimensions() << endl;
-    cout << "initialLives: " << getInitialLives() << endl;
-    cout << "coinPct: " << getCoinPct() << endl;
-    cout << "nothingPct: " << getNothingPct() << endl;
-    cout << "goobaPct: " << getGoobaPct() << endl;
-    cout << "koopaPct: " << getKoopaPct() << endl;
-    cout << "mushPct: " << getMushPct()<<endl;
-    
 
     World* W = new World(getNumLevels(), getDimensions(), getCoinPct(), getNothingPct(), getGoobaPct(), getKoopaPct(), getMushPct(), getInitialLives());
-
+    printWorld();
 
    
     //Comment THIS IS CHATGPT
-    W->printFirstStatus(); // Redirects printed output to buffer
+    //W->printFirstStatus(); // Redirects printed output to buffer
     for(int i = 0; i < getNumLevels(); i++){
-        if(i>0){levels[currentLevelIndex]->placeMario(getInitialLives());}
+        Level* currentLevel = W->getCurrentLevel();
+        if(i>0){currentLevel->placeMario(getInitialLives());}
         
         int NWSE = rand() % 4;
         
-        Level* currentLevel = W->getCurrentLevel();
 
-
+        W->printFirstStatus(); 
         while(!currentLevel->isGameOver()){
             //if(W->levels[0]->Move(NWSE)){break;
-            currentLevel->printUpdate(W->currentLevelIndex, NWSE);
             //cout << "Mario is moving in direction: " << NWSE << endl;
+            currentLevel->printUpdate(W->currentLevelIndex, NWSE);
+
             // Move Mario and check if he reaches the boss or warp
             if (currentLevel->Move(NWSE)) {
+                currentLevel->printUpdate(W->currentLevelIndex, NWSE);
                 break;  // Move to the next level
             }
             NWSE = rand() % 4;
-        }  
+        }                                                           
+
+
 
         // If game over, stop game
-        if(!currentLevel->isGameOver()) {
+        if(currentLevel->isGameOver()) {
             cout << "Game Over! Mario has run out of lives." << endl;
             break;
         }
