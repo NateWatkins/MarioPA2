@@ -12,7 +12,7 @@ Mario::Mario(){
 
 
 Mario::Mario(int inputLives, int inputRow, int inputColumn){
-    this->numLives = inputLives;
+    this->numLives = inputLives; 
     this->row = inputRow;
     this->column = inputColumn;
 };
@@ -102,7 +102,7 @@ bool Mario::needsWrap(char** grid, int NWSE, int dimensions){
 
 
 void Mario::checkWinStreak(int enemiesKilled){
-        if (enemiesKilled == 7){
+        if (enemiesKilled == 7){ // following game logic and adding a life to mario if he kills 7 enemies in the span of one life
             numLives++;
             enemiesKilled=0;
         }
@@ -120,7 +120,7 @@ void Mario::checkWinStreak(int enemiesKilled){
 
 
 void Mario::killedEnemy(){
-    enemiesKilled++;
+    enemiesKilled++; // adding to kill count
 };
 
 
@@ -132,8 +132,7 @@ void Mario::lostBattle(){
     enemiesKilled = 0;
     if(pwrLvl<= 0){ // Lose a life and power level stays 0
         numLives--;
-        pwrLvl = 0;
-        // or do we put oldChar = 'x' in the lostBattle
+        pwrLvl = 0; // reset pwrLvl
     }
 };
 
@@ -147,23 +146,23 @@ bool Mario::fightGooba(){
 
 
 bool Mario::fightKoopa(){
-    return ((rand() % 100) <= 65);
+    return ((rand() % 100) <= 65); // 65% chance to win
 };
 
 
-bool Mario::fightBoss(){
+bool Mario::fightBoss(){ // 50% chance to defeat boss
     return((rand()%2 == 0));
 };
 
-void Mario::collectCoin(){ 
-    numCoins++;
+void Mario::collectCoin(){ // adding to coin count and if he gets 20 in a lifespan he earns another life and his coin count goes back to zero
+    numCoins++; 
     if(numCoins==20){
         numCoins = 0;
         numLives++;
     } 
 };
 
-void Mario::eatMushroom(){
+void Mario::eatMushroom(){ // Mario gains a pwrLvl unless he already is at PL2
     if(pwrLvl<2){
         pwrLvl++;
     }
