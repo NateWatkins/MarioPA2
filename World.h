@@ -18,6 +18,10 @@ class World{
         World(int numWorlds,int dimensions, int coinPct, int emptyPct, int goombaPct,int koopaPct, int mushPct, int numInitialLives);
         ~World();
         
+
+        string FinalMessage;
+
+
         int numWorlds;
         Level** levels;
         
@@ -40,6 +44,11 @@ class World{
         int getMushPct();
 
 
+        int getMoves();
+        int addMove();
+        bool didWeWin();
+
+
     private:
         int numLevels;
         int dimensions;
@@ -53,7 +62,7 @@ class World{
         int currentLevelIndex;
         
 
-
+        int moves = 0;
 };
 
 

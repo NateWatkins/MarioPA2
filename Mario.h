@@ -71,7 +71,7 @@ class Mario{
         char oldChar;
         int numCoins=0;
         int numLives;
-        int pwrLvl = 1;
+        int pwrLvl = 0;
         int enemiesKilled = 0;
         int row;
         int column;

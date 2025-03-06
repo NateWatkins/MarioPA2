@@ -30,6 +30,17 @@ Level::Level(int dimensions, int coinPct, int emptyPct, int goombaPct,int koopaP
         warpX = rand() % dimensions;
         warpY = rand() % dimensions;
     }       
+    
+    MarioStartX = rand() % dimensions;
+    MarioStartY = rand() % dimensions;
+
+    while((MarioStartX == warpX || MarioStartX == bossX) && (MarioStartY == warpY || MarioStartY == bossY)){
+        MarioStartX = rand() % dimensions;
+        MarioStartY = rand() % dimensions;
+    }
+
+
+
     //This creates a populated standard grid without warps or bosses
     for(int i = 0; i < dimensions; i++){
         for(int j = 0; j < dimensions; j++){
@@ -67,9 +78,29 @@ Mario& Level::getMario() {
 }
 
 
-string directions[] = {"North", "West", "South", "East"};
+string directions[] = {"UP", "LEFT", "DOWN", "RIGHT"};
+
+
+
 
 void Level::printUpdate(int currentLevelIndex, int NWSE){
+    if(warped && M.getNumLives()>0){
+        cout << "Level: "<< currentLevelIndex <<". Mario is at position: (" << M.getColumn() << "," << M.getRow() << "). "
+        << "Mario is at power level " << M.getPwrLvl() << ". "
+        << "Mario visited " << M.getEncounter() << ". "
+        << "Mario has " << M.getNumLives() << " lives left. "
+        << "Mario has " << M.getNumCoins() << " coins. "
+        << "Mario will go to the next level!!." << endl;
+    cout<<"=========="<<endl;
+    }else if(beatBoss && M.getNumLives()>0){
+        cout << "Level: "<< currentLevelIndex <<". Mario is at position: (" << M.getColumn() << "," << M.getRow() << "). "
+        << "Mario is at power level " << M.getPwrLvl() << ". "
+        << "Mario visited " << M.getEncounter() << ". "
+        << "Mario has " << M.getNumLives() << " lives left. "
+        << "Mario has " << M.getNumCoins() << " coins. "
+        << "Mario will move " << directions[NWSE] << "." << endl;
+    cout<<"=========="<<endl;
+    }
     cout << "Level: "<< currentLevelIndex <<". Mario is at position: (" << M.getColumn() << "," << M.getRow() << "). "
         << "Mario is at power level " << M.getPwrLvl() << ". "
         << "Mario visited " << M.getEncounter() << ". "
@@ -97,8 +128,11 @@ string Level::getMarioPosition(){
 };
 
 
+
+
 //Move function-> where I move mario and encounter the new space and update the board accourdingly. This will be the main driver of the program. 
 bool Level::Move(int NWSE){
+    beatBoss = false;
     if(isGameOver()){
         return true;
     }
@@ -180,9 +214,11 @@ bool Level::Move(int NWSE){
     }else if(occupiedSpace == 'b'){
         while(!isGameOver()){
             if(M.fightBoss()){//Move on to next Level
+                M.setOldChar('H');
                 M.setEncounter("the Boss and won!");
                 printGrid();
-                return true;
+                //return true;
+                beatBoss = true;
             }else{ // If mario loses
                 M.lostBossBattle();
                 M.setEnemiesKilled(0);
@@ -211,8 +247,7 @@ bool Level::Move(int NWSE){
     grid[oldCordY][oldCordX] = M.getOldChar();
     
     printGrid();
-    cout<<"=========="<<endl;
-    cout<<"=========="<<endl;
+
 
     
     
@@ -225,17 +260,20 @@ bool Level::isGameOver(){
     return (M.getNumLives()<=0);
 };
 
-bool Level::fightBossAgain(){
+
+void Level::fightBossAgain(){
         while(!isGameOver()){
-        if(M.fightBoss()){//Move on to next Level
-            M.setEncounter("the Boss and won!");
-            this->lostBossBattle = true;
-        }else{ // If mario loses
-            M.lostBossBattle();
-            M.setEnemiesKilled(0);
-            M.setEncounter("a Boss and lost");
+            if(M.fightBoss()){
+                M.setEncounter("the Boss and won!");
+                beatBoss = true;
+                this->lostBossBattle = true;
+                break;
+            }else{ // If mario loses
+                M.lostBossBattle();
+                M.setEnemiesKilled(0);
+                M.setEncounter("a Boss and lost");
+            }
         }
-    }
 }
 
 
@@ -259,44 +297,21 @@ void Level::printGrid() {
         }
         cout << endl;
     }
+    cout<<"=========="<<endl;
 };
 
 
 
 void Level::placeMario(int numInitialLives) {
-    int numX = 0;
+ 
 
-    for (int i = 0; i < dimensions; i++) {
-        for (int j = 0; j < dimensions; j++) {
-            if (grid[i][j] == 'x') {
-                numX++;
-            }
-        }
-    }
 
-    if (numX == 0){
-        cout<<"Error there was no spot to place Mario :(. ";
-        return; 
-    }  
+    grid[MarioStartY][MarioStartX] = 'H';
+    M.setRow(MarioStartY);
+    M.setColumn(MarioStartX);
+    M.setNumLives(initLives);
 
-    int target = rand() % numX;
-    numX = 0; 
 
-    for (int first = 0; first < dimensions; first++) {
-        for (int sec = 0; sec < dimensions; sec++) {
-            if (grid[first][sec] == 'x') {
-                if (numX == target) {  
-                    grid[first][sec] = 'H';
-                    M.setRow(first);
-                    M.setColumn(sec);
-                    M.setNumLives(initLives);
-                    //cout << "Mario's lives after placement: " << M.getNumLives() << endl;
-                    return; 
-                }
-                numX++;
-            }
-        }
-    }
 }
 
 

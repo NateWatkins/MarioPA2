@@ -88,20 +88,22 @@ void World::setAttributes(int* values) {
 
 void World::printFirstStatus(){
 
-    levels[0]->placeMario(getInitialLives());
-    cout<<"Mario is starting at position"<<levels[0]->getMarioPosition()<<endl;
+    levels[currentLevelIndex]->placeMario(getInitialLives());
+    cout<<"Mario is starting at position"<<levels[currentLevelIndex]->getMarioPosition()<<endl;
     cout<<"=========="<<endl;     
-    levels[0]->printGrid();  
+    levels[currentLevelIndex]->printGrid();  
     cout<<"=========="<<endl;  
 };
 
 
 
 void World::RunGame(){
-    FileProcessor* FP = new FileProcessor("input.txt", "output.txt");
+    FileProcessor* FP = new FileProcessor("Input.txt", "Output.txt");
     int* FileContents = FP->ReadFile();
 
     ostringstream outputBuffer;
+    streambuf* oldCout = cout.rdbuf(outputBuffer.rdbuf());  // THIS CAUSES THE CRASH
+    cout.rdbuf(oldCout); // Restore std::cout
 
 
     setAttributes(FileContents);
@@ -114,7 +116,6 @@ void World::RunGame(){
     for(int i = 0; i < getNumLevels(); i++){
         Level* currentLevel = W->getCurrentLevel();
         if(i>0){currentLevel->placeMario(getInitialLives());}
-        
         int NWSE = rand() % 4;
         
 
@@ -126,15 +127,22 @@ void World::RunGame(){
             // Move Mario and check if he reaches the boss or warp
             if (currentLevel->Move(NWSE)) {
                 
+
                 while(currentLevel->lostBossBattle){
+
+                    addMove();
                     currentLevel->fightBossAgain();
-                    currentLevel->printUpdate(W->currentLevelIndex, NWSE);
-                    if(currentLevel->isGameOver()){cout<<"You lost to da boss"<<endl;}
+                    //currentLevel->printUpdate(W->currentLevelIndex, NWSE);
                 }
+
+
+                if(currentLevel->isGameOver()){cout<<"You lost to da boss"<<endl;}
+                if(currentLevel->beatBoss){return;}
                 currentLevel->printUpdate(W->currentLevelIndex, NWSE);
                 break; 
-            }
             
+            }
+            addMove();
             NWSE = rand() % 4;
             currentLevel->printUpdate(W->currentLevelIndex, NWSE);
         }                                                           
@@ -143,42 +151,54 @@ void World::RunGame(){
 
         // If game over, stop game
         if(currentLevel->isGameOver()) {
-            cout << "Game Over! Mario has run out of lives." << endl;
+            cout << "WE LOST THE GAME! :(" << endl;
             break;
         }
 
+        if(currentLevelIndex == getNumLevels()-1 && !currentLevel->isGameOver()){
+            cout << "You Beat the Game and Saved the Princess!!"<< endl;
+            break;
+        }
+
+
+
+        currentLevel->printGrid();
         // Advance to the next level if Mario wins or finds a warp
         W->nextLevel();
     }
 
-    streambuf* oldCout = cout.rdbuf(outputBuffer.rdbuf());  // THIS CAUSES THE CRASH
+    cout << "Mario moved: " << getMoves() << " times!" << endl;
+
     cout.rdbuf(oldCout); // Restore std::cout
     FP->WriteToFile(outputBuffer.str());
+    
+
+
     //M.UpdateGame(W.getCurrentLevel(),10);
     delete W;
     delete FP;
 
-    //FP = nullptr;
-    
+
+
+
+
 };
 
 
 
+int World::getMoves(){
+    return moves;
+};
 
 
+int World::addMove(){
+    moves++;
+};
 
 
-
-
-
-
-
-
-
-
-
-
-
+bool World::didWeWin(){
+    return (currentLevelIndex == numLevels) && (getCurrentLevel()->beatBoss == true);
+}
 
 
 
