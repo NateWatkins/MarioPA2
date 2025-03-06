@@ -2,3 +2,12 @@ b = (b+1)% maxSize
 
 Use this for wrapping around the array for mario
 
+
+Marshall Longtin and Nate Watkins
+2438966 and 2443602
+longtin@chapman.edu and nwatkins@chapman.edu
+CPSC 350-02 and 350-01
+PA2
+
+g++ *.cpp A2
+./A2
