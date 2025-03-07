@@ -20,10 +20,13 @@ class Level{
         bool Move(int NWSE);
         string getMarioPosition();
         Mario& getMario();
+
+
+
         int initLives;
         int dimensions;
 
-        void printLostToBoss(int currentLevelIndex);
+        void printLostToBoss();
 
         void fightBossAgain();     
 
@@ -42,7 +45,7 @@ class Level{
         bool warped = false;
 
         bool beatBoss = false;
-
+        int currentLevelIndex;
 
     private:
         

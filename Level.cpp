@@ -33,7 +33,6 @@ Level::Level(int dimensions, int coinPct, int emptyPct, int goombaPct,int koopaP
     
     MarioStartX = rand() % dimensions;
     MarioStartY = rand() % dimensions;
-
     while((MarioStartX == warpX || MarioStartX == bossX) && (MarioStartY == warpY || MarioStartY == bossY)){
         MarioStartX = rand() % dimensions;
         MarioStartY = rand() % dimensions;
@@ -84,7 +83,7 @@ string directions[] = {"UP", "LEFT", "DOWN", "RIGHT"};
 
 
 void Level::printUpdate(int currentLevelIndex, int NWSE){
-    if(warped && M.getNumLives()>0){
+    if(warped){
         cout << "Level: "<< currentLevelIndex <<". Mario is at position: (" << M.getColumn() << "," << M.getRow() << "). "
         << "Mario is at power level " << M.getPwrLvl() << ". "
         << "Mario visited " << M.getEncounter() << ". "
@@ -111,7 +110,7 @@ void Level::printUpdate(int currentLevelIndex, int NWSE){
 }
 
 
-void Level::printLostToBoss(int currentLevelIndex){
+void Level::printLostToBoss(){
     cout<<"Mario Lost to the Boss on Level: "<< currentLevelIndex <<". Mario is at position: (" << M.getColumn() << "," << M.getRow() << "). "
         << "Mario is at power level " << M.getPwrLvl() << ". "
         << "Mario has " << M.getNumLives() << " lives left. "
@@ -212,22 +211,22 @@ bool Level::Move(int NWSE){
             M.setEncounter("a Koopa and lost");
         }
     }else if(occupiedSpace == 'b'){
-        while(!isGameOver()){
-            if(M.fightBoss()){//Move on to next Level
-                M.setOldChar('H');
-                M.setEncounter("the Boss and won!");
-                printGrid();
-                //return true;
-                beatBoss = true;
-            }else{ // If mario loses
-                M.lostBossBattle();
-                M.setEnemiesKilled(0);
-                M.setEncounter("a Boss and lost");
-                lostBossBattle = false;
-            }
-        }
-        printGrid();
-        return true;
+
+        if (M.fightBoss()) {  // If Mario wins
+            M.setEncounter("the Boss and won!");
+            beatBoss = true;  // Mark level as completed
+            M.setOldChar('x');
+            grid[M.getRow()][M.getColumn()] = 'H';
+            grid[oldCordY][oldCordX] = M.getOldChar();
+            printGrid();
+            return true;  // Move to next level
+        } else {  // If Mario loses
+            M.lostBossBattle();
+            M.setEnemiesKilled(0);
+            M.setEncounter("a Boss and lost");
+            printLostToBoss();
+            return isGameOver();  // If Mario has no lives left, return true to end the game
+            }        //return true;
     }else if(occupiedSpace == 'm'){
         M.eatMushroom();
         M.setOldChar('x');
@@ -246,6 +245,9 @@ bool Level::Move(int NWSE){
     grid[M.getRow()][M.getColumn()] = 'H';
     grid[oldCordY][oldCordX] = M.getOldChar();
     
+
+
+
     printGrid();
 
 
@@ -262,18 +264,18 @@ bool Level::isGameOver(){
 
 
 void Level::fightBossAgain(){
-        while(!isGameOver()){
-            if(M.fightBoss()){
-                M.setEncounter("the Boss and won!");
-                beatBoss = true;
-                this->lostBossBattle = true;
-                break;
-            }else{ // If mario loses
-                M.lostBossBattle();
-                M.setEnemiesKilled(0);
-                M.setEncounter("a Boss and lost");
-            }
-        }
+    if (isGameOver()) return; // Stop if Mario is already out of lives
+
+    if (M.fightBoss()) {  // If Mario wins this time
+        M.setEncounter("the Boss and won!");
+        beatBoss,lostBossBattle = true,false;
+
+    } else {  // If Mario loses again
+        printLostToBoss();
+        M.lostBattle();
+        M.setEnemiesKilled(0);
+    }
+    return;
 }
 
 

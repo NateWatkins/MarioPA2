@@ -128,24 +128,43 @@ void World::RunGame(){
             //cout << "Mario is moving in direction: " << NWSE << endl;
             // Move Mario and check if he reaches the boss or warp
             if (currentLevel->Move(NWSE)) {
-                
-
-                while(currentLevel->lostBossBattle){
-                    addMove();
-                    currentLevel->fightBossAgain();
-                    //currentLevel->printUpdate(W->currentLevelIndex, NWSE);
+                if(currentLevelIndex == getNumLevels()-1 && !currentLevel->isGameOver()){
+                    cout << "You Beat the Game and Saved the Princess!!"<< endl;
+                    return;
                 }
 
-
-                if(currentLevel->isGameOver()){cout<<"You lost to da boss"<<endl;}
-                //if(currentLevel->beatBoss){return;}
-                currentLevel->printUpdate(W->currentLevelIndex, NWSE);
-                break; 
-            
+                if(currentLevel->isGameOver()) {
+                    cout << "WE LOST THE GAME! :(" << endl;
+                    return;
+                }
+                if(currentLevel->lostBossBattle){
+                    W->addMove();
+                    currentLevel->fightBossAgain();
+                    while(currentLevel->lostBossBattle){
+                        W->addMove();
+                        currentLevel->fightBossAgain();
+                    }
+                    cout << "You Beat the Game and Saved the Princess!!"<< endl;
+                    return;
+                        //currentLevel->printUpdate(W->currentLevelIndex, NWSE);'
+                }
+                if(currentLevelIndex <= getNumLevels()-1 && currentLevel->warped){
+                    cout<< "Youve Warped to the Next Level"<< endl;
+                    break;
+                }
+            // if(didWeWin()){
+            //     cout << "You Beat the Game and Saved the Princess!!"<< endl;
+            // }
+            // if(currentLevel->isGameOver()){cout<<"You lost to da boss"<<endl;}
+            //if(currentLevel->beatBoss){return;}
+            //currentLevel->printUpdate(W->currentLevelIndex, NWSE);
+            break; 
+        
             }
-            addMove();
+            W->addMove();
             NWSE = rand() % 4;
             currentLevel->printUpdate(W->currentLevelIndex, NWSE);
+
         }                                                           
 
 
@@ -153,26 +172,27 @@ void World::RunGame(){
 
 
         // If game over, stop game
-        if(currentLevel->isGameOver()) {
-            cout << "WE LOST THE GAME! :(" << endl;
-            break;
-        }
 
-        if(currentLevelIndex == getNumLevels()-1 && !currentLevel->isGameOver()){
+        if(W->getCurrentLevel()->beatBoss && W->currentLevelIndex == W->getNumLevels()){
             cout << "You Beat the Game and Saved the Princess!!"<< endl;
-            break;
-        }
+            return;
+        } 
 
 
-
-        currentLevel->printGrid();
+        //currentLevel->printGrid();
         // Advance to the next level if Mario wins or finds a warp
         W->nextLevel();
+        
+
     }
-
-    cout << "Mario moved: " << getMoves() << " times!" << endl;
-
-    cout.rdbuf(oldCout); // Restore std::cout
+    // if(W->getCurrentLevel()->beatBoss){
+    //     cout << "You Beat the Game and Saved the Princess!!"<< endl;
+    // } 
+        
+    
+    cout << "Mario moved: " << W->getMoves() << " times!" << endl;
+    
+   // cout.rdbuf(oldCout); // Restore std::cout
     FP->WriteToFile(outputBuffer.str());
     
 
@@ -180,7 +200,6 @@ void World::RunGame(){
     //M.UpdateGame(W.getCurrentLevel(),10);
     delete W;
     delete FP;
-
 
 
 
